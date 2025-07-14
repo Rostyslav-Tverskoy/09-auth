@@ -1,44 +1,47 @@
-import Link from 'next/link';
+import css from './NoteList.module.css';
+import type { Note } from '@/types/note';
+import { deleteNote } from '@/lib/api/clientApi';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { deleteNote } from '../../lib/api';
-import styles from './NoteList.module.css';
-import type { Note } from '../../types/note';
+import toast from 'react-hot-toast';
+import Link from 'next/link';
 
 interface NoteListProps {
   notes: Note[];
-  isLoading?: boolean;
-  isError?: boolean;
-  isSuccess?: boolean;
 }
 
-const NoteList = ({ notes, isLoading, isError }: NoteListProps) => {
+export default function NoteList({ notes }: NoteListProps) {
   const queryClient = useQueryClient();
-  
 
-  const deleteMutation = useMutation({
-    mutationFn: (id: number) => deleteNote(id),
+  const { mutate } = useMutation({
+    mutationFn: deleteNote,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['notes'] });
     },
+    onError: () => {
+      toast.error('Something went wrong, please, try again.');
+    },
   });
-  
 
-  if (isLoading) return <p>Loading notes...</p>;
-  if (isError) return <p>Failed to load notes.</p>;
+  if (!notes || notes.length === 0) return null;
 
   return (
-    <ul className={styles.list}>
-      {notes.map(note => (
-        <li key={note.id} className={styles.listItem}>
-          <h2 className={styles.title}>{note.title}</h2>
-          <p className={styles.content}>{note.content}</p>
-          <div className={styles.footer}>
-            <Link href={`/notes/${note.id}`}>View details</Link>
-            <span className={styles.tag}>{note.tag}</span>
+    <ul className={css.list}>
+      {notes.map((note: Note) => (
+        <li className={css.listItem} key={note.id}>
+          <h2 className={css.title}>{note.title}</h2>
+          <p className={css.content}>{note.content}</p>
+          <div className={css.footer}>
+            <span className={css.tag}>{note.tag}</span>
+            <Link href={`/notes/${encodeURIComponent(note.id)}`}>
+              View details
+            </Link>
             <button
-              className={styles.button}
-              onClick={() => deleteMutation.mutate(note.id)}
-              disabled={deleteMutation.isPending}
+              className={css.button}
+              onClick={() => {
+                if (note.id !== undefined) {
+                  mutate(note.id);
+                }
+              }}
             >
               Delete
             </button>
@@ -47,6 +50,4 @@ const NoteList = ({ notes, isLoading, isError }: NoteListProps) => {
       ))}
     </ul>
   );
-};
-
-export default NoteList;
+}

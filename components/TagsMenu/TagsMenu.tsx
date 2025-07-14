@@ -1,39 +1,44 @@
-"use client";
+'use client';
+import { tags } from '@/types/tags';
+import css from './TagsMenu.module.css';
+import Link from 'next/link';
+import { useState } from 'react';
 
-import { useState } from "react";
-import css from "./TagsMenu.module.css";
-import Link from "next/link";
+export default function TagsMenu() {
+  const [isTagListOpened, setIsTagListOpened] = useState(false);
 
-const tags = ["Todo", "Work", "Personal", "Meeting", "Shopping"];
+  function handleOpener() {
+    setIsTagListOpened(prev => !prev);
+  }
 
-const TagsMenu = () => {
-  const [isOpen, setIsOpen] = useState(false);
-
-  const toggleMenu = () => setIsOpen((prev) => !prev); 
-  const closeMenu = () => setIsOpen(false);            
+  function handleCloseMenu() {
+    setIsTagListOpened(false);
+  }
 
   return (
     <div className={css.menuContainer}>
-      <button className={css.menuButton} onClick={toggleMenu}>
+      <button className={css.menuButton} onClick={handleOpener}>
         Notes ▾
       </button>
-
-      {isOpen && (
+      {isTagListOpened && (
         <ul className={css.menuList}>
           <li className={css.menuItem}>
-            <Link className={css.menuLink} href="/notes/filter/all" onClick={closeMenu}>
-              AllNotes
+            <Link
+              href={`/notes/filter/All`}
+              className={css.menuLink}
+              onClick={handleCloseMenu}
+            >
+              All
             </Link>
           </li>
-
-          {tags.map((tag) => (
-            <li key={tag} className={css.menuItem}>
+          {tags.map(tagItem => (
+            <li className={css.menuItem} key={tagItem}>
               <Link
+                href={`/notes/filter/${tagItem}`}
                 className={css.menuLink}
-                href={`/notes/filter/${tag}`}
-                onClick={closeMenu}
+                onClick={handleCloseMenu}
               >
-                {tag}
+                {tagItem}
               </Link>
             </li>
           ))}
@@ -41,6 +46,4 @@ const TagsMenu = () => {
       )}
     </div>
   );
-};
-
-export default TagsMenu;
+}

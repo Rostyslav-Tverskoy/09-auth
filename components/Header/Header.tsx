@@ -1,21 +1,25 @@
-import Link from "next/link";
-import styles from "../Header/header.module.css"
-import TagsMenu from "../TagsMenu/TagsMenu";
+import AuthNavigation from '../AuthNavigation/AuthNavigation';
+import TagsMenu from '../TagsMenu/TagsMenu';
+import css from './Header.module.css';
+import Link from 'next/link';
 
 export default function Header() {
-    return (
-        <header className={styles.header}>
-      <Link href="/" aria-label="Home">NoteHub</Link>
+  return (
+    <header className={css.header}>
+      <Link href="/" aria-label="Home">
+        NoteHub
+      </Link>
       <nav aria-label="Main Navigation">
-        <ul className={styles.navigation}>
+        <ul className={css.navigation}>
           <li>
             <Link href="/">Home</Link>
           </li>
           <li>
             <TagsMenu />
           </li>
+          <AuthNavigation />
         </ul>
       </nav>
     </header>
-    )
+  );
 }

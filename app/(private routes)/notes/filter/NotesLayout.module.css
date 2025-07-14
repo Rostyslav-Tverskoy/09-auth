@@ -1,0 +1,9 @@
+.aside {
+  display: inline-block;
+  width: 200px;
+  padding: 20px;
+  background-color: #444;
+}
+.section {
+  display: flex;
+}

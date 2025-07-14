@@ -1,45 +1,57 @@
-"use client";
+'use client';
+import css from './NotePreview.module.css';
+import { useQuery } from '@tanstack/react-query';
+import { useParams, useRouter } from 'next/navigation';
+import { fetchNoteById } from '@/lib/api/clientApi';
+import Modal from '@/components/Modal/Modal';
+import { useState } from 'react';
 
-import { useQuery } from "@tanstack/react-query";
-import { fetchNoteById } from "@/lib/api";
-import Modal from "@/components/Modal/Modal";
-import styles from "./NotePreview.module.css";
-import { useRouter } from "next/navigation";
+export default function NotePreviewClient() {
+  const { id } = useParams<{ id: string }>();
+  const [isModalOpened, setIsModalOpened] = useState(true);
 
-type Props = {
-  id: number
-};
-
-const NotePreviewClient = ({ id }: Props) => {
-  const router = useRouter();
-  const idk = Number(id);
-  const { data: note, isLoading, isError } = useQuery({
-    queryKey: ["note", idk],
-    queryFn: () => fetchNoteById(idk),
+  const {
+    data: note,
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ['note', id],
+    queryFn: () => fetchNoteById(id),
     refetchOnMount: false,
   });
 
-  const handleClose = () => {
-    router.back();
+  const route = useRouter();
+  if (isLoading) return <p>Loading, please wait...</p>;
+  if (error || !note) return <p>Something went wrong.</p>;
+
+  function toggleModal() {
+    setIsModalOpened(!isModalOpened);
+    route.back();
   }
 
-  if (isLoading) return <Modal onClose={handleClose}>Loading...</Modal>;
-  if (isError || !note) return <Modal onClose={handleClose}>Error loading note</Modal>;
-
   return (
-    <Modal onClose={handleClose}>
-      <div className={styles.container}>
-        <div className={styles.header}>
-          <h2>{note.title}</h2>
-          <span className={styles.tag}>{note.tag}</span>
-        </div>
-        <p className={styles.content}>{note.content}</p>
-        <p className={styles.date}>
-          {new Date(note.createdAt).toLocaleString()}
-        </p>
-      </div>
-    </Modal>
+    <>
+      {isModalOpened && (
+        <Modal onClose={toggleModal}>
+          <div className={css.container}>
+            <div className={css.item}>
+              <div className={css.header}>
+                <h2>{note.title}</h2>
+                <span className={css.tag}>{note.tag}</span>
+              </div>
+              <p className={css.content}>{note.content}</p>
+              <p className={css.date}>{note.createdAt}</p>
+              <button
+                type="button"
+                className={css.backBtn}
+                onClick={toggleModal}
+              >
+                Go Back
+              </button>
+            </div>
+          </div>
+        </Modal>
+      )}
+    </>
   );
-};
-
-export default NotePreviewClient;
+}
