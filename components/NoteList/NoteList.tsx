@@ -39,7 +39,7 @@ export default function NoteList({ notes }: NoteListProps) {
               className={css.button}
               onClick={() => {
                 if (note.id !== undefined) {
-                  mutate(note.id);
+                  mutate(note.id.toString());
                 }
               }}
             >
