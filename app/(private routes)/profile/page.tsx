@@ -1,4 +1,5 @@
 import { Metadata } from 'next';
+import { getServerUser } from '@/lib/api/serverApi';
 import ProfileClient from './ProfileClient';
 
 export const metadata: Metadata = {
@@ -20,6 +21,7 @@ export const metadata: Metadata = {
   },
 };
 
-export default function Profile() {
-  return <ProfileClient />;
+export default async function Profile() {
+  const user = await getServerUser();
+  return <ProfileClient user={user} />;
 }

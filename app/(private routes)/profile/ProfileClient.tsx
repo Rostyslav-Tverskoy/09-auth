@@ -3,10 +3,14 @@ import Image from 'next/image';
 import css from './ProfilePage.module.css';
 import Link from 'next/link';
 
-import { useAuthStore } from '@/lib/store/authStore';
+import { User } from '@/types/user';
 
-export default function ProfileClient() {
-  const user = useAuthStore(state => state.user);
+
+type Props = {
+  user: User
+}
+
+export default function ProfileClient({ user }: Props) {
   return (
     <div className={css.mainContent}>
       <div className={css.profileCard}>

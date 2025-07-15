@@ -2,6 +2,7 @@ import { nextServer } from './api';
 import { cookies } from 'next/headers';
 import type { Response } from '@/types/response';
 import { Note } from '@/types/note';
+import { User } from '@/types/user';
 
 export const checkServerSession = async () => {
   const cookieStore = await cookies();
@@ -13,6 +14,17 @@ export const checkServerSession = async () => {
 
   return response;
 };
+
+export async function getServerUser(): Promise<User> {
+  const cookieStore = await cookies();
+  const response = await nextServer.get<User>('/users/me', {
+    headers: {
+      Cookie: cookieStore.toString(),
+    },
+  });
+
+  return response.data;
+}
 
 export async function fetchServerNotes(
   searchText: string,

@@ -60,7 +60,7 @@ export async function createNote(noteData: CreateNoteData): Promise<Note> {
   return response.data;
 }
 
-export async function deleteNote(id: number): Promise<Note> {
+export async function deleteNote(id: string): Promise<Note> {
   const response = await nextServer.delete<Note>(`/notes/${id}`);
   return response.data;
 }
@@ -82,11 +82,6 @@ export async function logOut(): Promise<MessageResponse> {
 
 export async function checkSession(): Promise<MessageResponse> {
   const response = await nextServer.get<MessageResponse>('/auth/session');
-  return response.data;
-}
-
-export async function refreshSession(): Promise<MessageResponse> {
-  const response = await nextServer.get<MessageResponse>('/auth/refresh');
   return response.data;
 }
 
